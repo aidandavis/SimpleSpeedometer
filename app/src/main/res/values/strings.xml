@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">SimpleSpeedo</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="speed">Speed</string>
+    <string name="blaack">BLAAACK</string>
 </resources>
