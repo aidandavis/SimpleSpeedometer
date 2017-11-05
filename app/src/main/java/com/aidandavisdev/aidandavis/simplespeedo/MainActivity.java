@@ -60,6 +60,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateSpeedDisplay() {
-        speedText.setText(String.valueOf(speedTracker.getSpeedKMH()));
+        speedText.setText(String.format("%s Km/H", String.valueOf(speedTracker.getSpeedKMH())));
     }
 }
