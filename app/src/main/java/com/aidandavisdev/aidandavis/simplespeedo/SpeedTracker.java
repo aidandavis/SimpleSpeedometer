@@ -1,4 +1,4 @@
-package com.domain.aidandavis.simplespeedo;
+package com.aidandavisdev.aidandavis.simplespeedo;
 
 import android.Manifest;
 import android.content.Context;

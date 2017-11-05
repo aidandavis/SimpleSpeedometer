@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.domain.aidandavis.simplespeedo.MainActivity"
+    tools:context="com.aidandavisdev.aidandavis.simplespeedo.MainActivity"
     tools:showIn="@layout/activity_main"
     android:padding="20dp">
 
