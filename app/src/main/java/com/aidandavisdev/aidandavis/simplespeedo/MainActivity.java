@@ -1,6 +1,7 @@
 package com.aidandavisdev.aidandavis.simplespeedo;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
@@ -8,8 +9,17 @@ import android.widget.TextView;
 import com.domain.aidandavis.simplespeedo.R;
 
 public class MainActivity extends AppCompatActivity {
-    TextView speedText;
-    SpeedTracker speedTracker;
+    private TextView speedText;
+    private SpeedTracker speedTracker;
+
+    private Handler updater;
+    private final Runnable updateTask = new Runnable() {
+        @Override
+        public void run() {
+            updateSpeedDisplay();
+            updater.postDelayed(this, 333); // time between updates
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         speedText = (TextView) findViewById(R.id.speedDisplay);
         speedTracker = new SpeedTracker(getBaseContext());
+
+        updater = new Handler();
     }
 
     @Override
@@ -35,15 +47,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        speedTracker.stopTracking();
         stopUpdatingDisplay();
+        speedTracker.stopTracking();
     }
 
     private void startUpdatingDisplay() {
-
+        updater.post(updateTask);
     }
 
     private void stopUpdatingDisplay() {
-        
+        updater.removeCallbacks(updateTask);
+    }
+
+    private void updateSpeedDisplay() {
+        speedText.setText(String.valueOf(speedTracker.getSpeedKMH()));
     }
 }
