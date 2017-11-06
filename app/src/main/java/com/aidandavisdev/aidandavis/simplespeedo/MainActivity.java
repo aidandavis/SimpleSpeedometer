@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.toolbar_title);
 
         speedText = (TextView) findViewById(R.id.speedDisplay);
@@ -60,6 +60,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateSpeedDisplay() {
-        speedText.setText(String.format("%s Km/H", String.valueOf(speedTracker.getSpeedKMH())));
+        speedText.setText(String.format("%s km/h", String.valueOf(speedTracker.getSpeedKMH())));
     }
 }
