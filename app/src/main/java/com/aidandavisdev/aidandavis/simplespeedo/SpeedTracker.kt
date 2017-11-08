@@ -18,10 +18,13 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     private val mLocationManager: LocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     private var isTracking = false
-    private var speed = 0.0
+    private var speed = 0.0 // m/s
 
     val speedKMH: Double
         get() = speed * 3.6
+
+    private var locationBuffer: ArrayList<Location> = ArrayList()
+    private val BUFFER_TIME = 2000 // 2 seconds of points in buffer
 
     fun startTracking() {
         if (!isTracking) {
@@ -43,19 +46,45 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
             mLocationManager.removeUpdates(this)
             isTracking = false
             speed = 0.0
+            locationBuffer.clear()
         }
     }
-
-
 
     override fun onLocationChanged(location: Location) {
         if (isTracking) {
-            //speed = location.getSpeed();
+            addLocationToBuffer(location)
 
+            val distance = getAverageDistanceFromBuffer() // metres
+            val time = locationBuffer.last().time - locationBuffer.first().time // seconds
 
+            speed = (distance / time).toDouble() // thanks grade-8 physics
         }
     }
 
+    // add location to buffer and also delete locations older than set time
+    private fun addLocationToBuffer(location: Location) {
+        locationBuffer.add(location)
+        locationBuffer
+                .filter { (location.time - it.time) > BUFFER_TIME }
+                .forEach { locationBuffer.remove(it) }
+    }
+
+    private fun getAverageDistanceFromBuffer(): Long {
+        var totalDistance = 0F
+        for (i in locationBuffer.indices) {
+            if (i == 0) continue // skipping first
+
+            val distanceBetweenTwo = floatArrayOf()
+            Location.distanceBetween(locationBuffer[i-1].latitude, locationBuffer[i-1].longitude,
+                    locationBuffer[i].latitude, locationBuffer[i].longitude, distanceBetweenTwo)
+
+            totalDistance += distanceBetweenTwo[0] // computed distance is stored in first index of array
+        }
+        return (totalDistance / locationBuffer.size).toLong()
+    }
+
+
+    /* functions below are unused */
     override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {
         // do nothing for now?
     }
