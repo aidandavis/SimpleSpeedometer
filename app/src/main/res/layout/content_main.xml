@@ -15,9 +15,19 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="20dp"
-        android:textSize="60sp"
+        android:textSize="120sp"
+        android:textColor="@color/black"
         android:text="@string/speed"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/speedDisplay"
+        android:layout_centerHorizontal="true"
+        android:text="@string/km_h"
+        android:paddingTop="20dp"
+        android:textColor="@color/black"/>
 
     <Button
         android:id="@+id/blackButton"
@@ -25,5 +35,6 @@
         android:layout_height="wrap_content"
         android:text="@string/blaack"
         android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:backgroundTint="@color/colorPrimary"/>
 </RelativeLayout>

@@ -4,4 +4,5 @@
     <string name="speed">Speed</string>
     <string name="blaack">BLAAAACK</string>
     <string name="toolbar_title">Super Simple Speedo</string>
+    <string name="km_h">(km/h)</string>
 </resources>
