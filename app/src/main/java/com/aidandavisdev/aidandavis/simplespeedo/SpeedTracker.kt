@@ -54,10 +54,12 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         if (isTracking) {
             addLocationToBuffer(location)
 
-            val distance = getAverageDistanceFromBuffer() // metres
-            val time = locationBuffer.last().time - locationBuffer.first().time // seconds
+            if (locationBuffer.size > 2) {
+                val distance = getAverageDistanceFromBuffer() // metres
+                val time = locationBuffer.last().time - locationBuffer.first().time // seconds
 
-            speed = (distance / time).toDouble() // thanks grade-8 physics
+                speed = (distance / time).toDouble() // thanks grade-8 physics
+            }
         }
     }
 
