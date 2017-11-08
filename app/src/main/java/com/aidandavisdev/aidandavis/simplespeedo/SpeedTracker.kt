@@ -24,7 +24,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         get() = speed * 3.6
 
     private var locationBuffer: ArrayList<Location> = ArrayList()
-    private val BUFFER_TIME = 2000 // 2 seconds of points in buffer
+    private val BUFFER_TIME = 5000 // 2 seconds of points in buffer
 
     fun startTracking() {
         if (!isTracking) {
@@ -56,7 +56,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
 
             if (locationBuffer.size > 2) {
                 val distance = getAverageDistanceFromBuffer() // metres
-                val time = locationBuffer.last().time - locationBuffer.first().time // seconds
+                val time = (locationBuffer.last().time - locationBuffer.first().time)/1000 // seconds
 
                 speed = distance.toDouble() / time.toDouble() // thanks grade-8 physics
             }
