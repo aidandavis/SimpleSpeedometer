@@ -57,6 +57,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSpeedDisplay() {
         val speed = speedTracker!!.speedKMH
-        speedText!!.text = "$speed km/h"
+        speedText!!.text = "%.2f".format(speed) + " km/h"
     }
 }
