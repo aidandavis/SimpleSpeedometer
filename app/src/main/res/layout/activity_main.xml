@@ -26,25 +26,31 @@
         android:padding="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:id="@+id/speed_display"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="20dp"
-            android:text="@string/speed"
-            android:textColor="@color/black"
-            android:textSize="120sp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/speed_format"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/speed_display"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="20dp"
-            android:text="@string/km_h"
-            android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/speed_display"
+                android:layout_width="match_parent"
+                android:maxLines="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="20dp"
+                android:text="@string/speed"
+                android:textColor="@color/black"
+                android:textSize="120sp" />
+
+            <TextView
+                android:id="@+id/speed_format"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:text="@string/km_h"
+                android:textColor="@color/black"
+                android:layout_gravity="right"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/blackButton"
@@ -53,7 +59,8 @@
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
             android:backgroundTint="@color/colorPrimary"
-            android:text="@string/blaack" />
+            android:text="@string/blaack"
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 
