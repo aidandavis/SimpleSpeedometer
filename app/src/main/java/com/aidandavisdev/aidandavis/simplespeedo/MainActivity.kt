@@ -56,6 +56,10 @@ class MainActivity : AppCompatActivity() {
         if (!isBlack) {
             textColour = ContextCompat.getColor(this, R.color.white)
             backgroundColour = ContextCompat.getColor(this, R.color.black)
+
+            isBlack = true
+        } else {
+            isBlack = false
         }
 
         // background
