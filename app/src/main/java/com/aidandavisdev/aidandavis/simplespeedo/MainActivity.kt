@@ -2,15 +2,25 @@ package com.aidandavisdev.aidandavis.simplespeedo
 
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.widget.Button
+import android.widget.RelativeLayout
 import android.widget.TextView
 
 import com.domain.aidandavis.simplespeedo.R
 
 class MainActivity : AppCompatActivity() {
-    private var speedText: TextView? = null
-    private var speedTracker: SpeedTracker? = null
+    private lateinit var speedText: TextView
+    private lateinit var speedTracker: SpeedTracker
+
+    private lateinit var blackButton: Button
+    private lateinit var toolbar: Toolbar
+    private lateinit var speedFormatText: TextView
+    private lateinit var mainLayout: RelativeLayout
+
+    private var isBlack = false
 
     private var updater: Handler? = null
     private val updateTask = object : Runnable {
@@ -23,20 +33,42 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
 
+        toolbar = findViewById(R.id.toolbar) as Toolbar
         toolbar.setTitle(R.string.toolbar_title)
 
-        speedText = findViewById(R.id.speedDisplay) as TextView
+        speedText = findViewById(R.id.speed_display) as TextView
         speedTracker = SpeedTracker(baseContext)
 
         updater = Handler()
+
+        blackButton = findViewById(R.id.blackButton) as Button
+        blackButton.setOnClickListener({ blackButtonPressed() })
+
+        speedFormatText = findViewById(R.id.speed_format) as TextView
+        mainLayout = findViewById(R.id.main_layout) as RelativeLayout
+    }
+
+    private fun blackButtonPressed() {
+        var textColour = ContextCompat.getColor(this, R.color.black)
+        var backgroundColour = ContextCompat.getColor(this, R.color.white)
+
+        if (!isBlack) {
+            textColour = ContextCompat.getColor(this, R.color.white)
+            backgroundColour = ContextCompat.getColor(this, R.color.black)
+        }
+
+        // background
+        mainLayout.setBackgroundColor(backgroundColour)
+        // text
+        speedText.setTextColor(textColour)
+        speedFormatText.setTextColor(textColour)
     }
 
     override fun onResume() {
         super.onResume()
 
-        speedTracker!!.startTracking()
+        speedTracker.startTracking()
         startUpdatingDisplay()
     }
 
@@ -44,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
 
         stopUpdatingDisplay()
-        speedTracker!!.stopTracking()
+        speedTracker.stopTracking()
     }
 
     private fun startUpdatingDisplay() {
@@ -56,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSpeedDisplay() {
-        val speed = speedTracker!!.speedKMH
-        speedText!!.text = "%.2f".format(speed)
+        val speed = speedTracker.speedKMH
+        speedText.text = "%.2f".format(speed)
     }
 }

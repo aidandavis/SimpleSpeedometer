@@ -20,13 +20,14 @@
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="20dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:id="@+id/speedDisplay"
+            android:id="@+id/speed_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -36,9 +37,10 @@
             android:textSize="120sp" />
 
         <TextView
+            android:id="@+id/speed_format"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/speedDisplay"
+            android:layout_below="@+id/speed_display"
             android:layout_centerHorizontal="true"
             android:paddingTop="20dp"
             android:text="@string/km_h"
