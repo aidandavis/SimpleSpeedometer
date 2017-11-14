@@ -1,13 +1,17 @@
 package com.aidandavisdev.aidandavis.simplespeedo
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 
 import com.domain.aidandavis.simplespeedo.R
 
@@ -32,6 +36,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // get permission if not there
+        requestPermission()
+
         setContentView(R.layout.activity_main)
 
         toolbar = findViewById(R.id.toolbar) as Toolbar
@@ -67,6 +75,18 @@ class MainActivity : AppCompatActivity() {
         // text
         speedText.setTextColor(textColour)
         speedFormatText.setTextColor(textColour)
+    }
+
+    private fun requestPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "App will close after accepting or cancelling! (Just restart it)", Toast.LENGTH_SHORT).show()
+
+            var fineRequestCode = 1
+            var finePermission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+            ActivityCompat.requestPermissions(this, finePermission, fineRequestCode )
+
+            finish()
+        }
     }
 
     override fun onResume() {

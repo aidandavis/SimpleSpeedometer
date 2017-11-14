@@ -29,7 +29,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     fun startTracking() {
         if (!isTracking) {
             // permission check
-            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(mContext, "Location Permission Not Given :(", Toast.LENGTH_SHORT).show()
                 return
             }
