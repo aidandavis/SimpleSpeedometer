@@ -54,13 +54,13 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         if (isTracking) {
             addLocationToBuffer(location)
 
-            if (locationBuffer.size > 2) {
+            speed = if (locationBuffer.size > 2) {
                 val distance = getAverageDistanceFromBuffer() // metres
                 val time = (locationBuffer.last().time - locationBuffer.first().time)/1000 // seconds
 
-                speed = distance.toDouble() / time.toDouble() // thanks grade-8 physics
+                distance.toDouble() / time.toDouble() // thanks grade-8 physics
             } else {
-                speed = 0.0
+                0.0
             }
         }
     }
@@ -78,7 +78,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         for (i in locationBuffer.indices) {
             if (i == 0) continue // skipping first
 
-            var distanceBetweenTwo = floatArrayOf(0F, 0F, 0F)
+            val distanceBetweenTwo = floatArrayOf(0F, 0F, 0F)
             Location.distanceBetween(locationBuffer[i-1].latitude, locationBuffer[i-1].longitude,
                     locationBuffer[i].latitude, locationBuffer[i].longitude, distanceBetweenTwo)
 
