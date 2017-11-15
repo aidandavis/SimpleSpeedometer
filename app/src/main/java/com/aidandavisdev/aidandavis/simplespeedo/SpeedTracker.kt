@@ -24,7 +24,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         get() = speed * 3.6
 
     private var locationBuffer: ArrayList<Location> = ArrayList()
-    private val BUFFER_TIME = 2500 // 2 seconds of points in buffer
+    private val BUFFER_TIME = 2500 // seconds of points in buffer
 
     fun startTracking() {
         if (!isTracking) {
@@ -52,16 +52,26 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
 
     override fun onLocationChanged(location: Location) {
         if (isTracking) {
-            addLocationToBuffer(location)
 
-            speed = if (locationBuffer.size > 2) {
-                val distance = getAverageDistanceFromBuffer() // metres
-                val time = (locationBuffer.last().time - locationBuffer.first().time)/1000 // seconds
+            speed = if (location.hasSpeed()) {
+                location.speed.toDouble()
+            } else 0.0
 
-                distance.toDouble() / time.toDouble() // thanks grade-8 physics
-            } else {
-                0.0
-            }
+            // seems to be off by a third or so, otherwise would be after the above else statement
+            // calculateSpeedManually(location)
+        }
+    }
+
+    private fun calculateSpeedManually(location: Location) {
+        addLocationToBuffer(location)
+
+        speed = if (locationBuffer.size > 2) {
+            val distance = getAverageDistanceFromBuffer() // metres
+            val time = (locationBuffer.last().time - locationBuffer.first().time) / 1000 // seconds
+
+            distance.toDouble() / time.toDouble() // thanks grade-8 physics
+        } else {
+            0.0
         }
     }
 
