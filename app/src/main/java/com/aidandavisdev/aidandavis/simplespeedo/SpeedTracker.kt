@@ -70,7 +70,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
             val distance = getAverageDistanceFromBuffer() // metres
             val time = (locationBuffer.last().time - locationBuffer.first().time) / 1000 // seconds
 
-            distance.toDouble() / time.toDouble() // thanks grade-8 physics
+            (distance / time).toDouble() // thanks grade-8 physics
         } else {
             0.0
         }
@@ -91,16 +91,13 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     }
 
 
-    /* functions below are unused */
+    /* functions below are unused but required */
     override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {
-        // do nothing for now?
     }
 
     override fun onProviderEnabled(s: String) {
-        // don't need to do anything?
     }
 
     override fun onProviderDisabled(s: String) {
-        // don't need to do anything here either?
     }
 }

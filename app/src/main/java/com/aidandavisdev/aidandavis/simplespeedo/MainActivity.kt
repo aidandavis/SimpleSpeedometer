@@ -13,8 +13,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.aidandavisdev.aidandavis.simplespeedo.R
-
 class MainActivity : AppCompatActivity() {
     private lateinit var speedText: TextView
     private lateinit var speedTracker: SpeedTracker
@@ -79,8 +77,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "App will close after accepting or cancelling! (Just restart it)", Toast.LENGTH_SHORT).show()
-
             var fineRequestCode = 1
             var finePermission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
             ActivityCompat.requestPermissions(this, finePermission, fineRequestCode )
