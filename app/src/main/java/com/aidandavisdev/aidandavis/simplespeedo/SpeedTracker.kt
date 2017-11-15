@@ -24,7 +24,6 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         get() = speed * 3.6
 
     private var locationBuffer: ArrayList<Location> = ArrayList()
-    private val BUFFER_TIME = 2500 // seconds of points in buffer
 
     fun startTracking() {
         if (!isTracking) {
@@ -52,20 +51,22 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
 
     override fun onLocationChanged(location: Location) {
         if (isTracking) {
-
             speed = if (location.hasSpeed()) {
                 location.speed.toDouble()
-            } else 0.0
-
-            // seems to be off by a third or so, otherwise would be after the above else statement
-            // calculateSpeedManually(location)
+            } else {
+                calculateSpeedManually(location)
+            }
         }
     }
 
-    private fun calculateSpeedManually(location: Location) {
-        addLocationToBuffer(location)
+    private fun calculateSpeedManually(location: Location): Double {
+        locationBuffer.add(location)
+        // keep buffer size small
+        while (locationBuffer.size > 10) { // 10 is a guess
+            locationBuffer.removeAt(locationBuffer.lastIndex)
+        }
 
-        speed = if (locationBuffer.size > 2) {
+        return if (locationBuffer.size > 3) {
             val distance = getAverageDistanceFromBuffer() // metres
             val time = (locationBuffer.last().time - locationBuffer.first().time) / 1000 // seconds
 
@@ -75,21 +76,13 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         }
     }
 
-    // add location to buffer and also delete locations older than set time
-    private fun addLocationToBuffer(location: Location) {
-        locationBuffer.add(location)
-        locationBuffer
-                .filter { (location.time - it.time) > BUFFER_TIME }
-                .forEach { locationBuffer.remove(it) }
-    }
-
     private fun getAverageDistanceFromBuffer(): Long {
         var totalDistance = 0F
         for (i in locationBuffer.indices) {
             if (i == 0) continue // skipping first
 
             val distanceBetweenTwo = floatArrayOf(0F, 0F, 0F)
-            Location.distanceBetween(locationBuffer[i-1].latitude, locationBuffer[i-1].longitude,
+            Location.distanceBetween(locationBuffer[i - 1].latitude, locationBuffer[i - 1].longitude,
                     locationBuffer[i].latitude, locationBuffer[i].longitude, distanceBetweenTwo)
 
             totalDistance += distanceBetweenTwo[0] // computed distance is stored in first index of array
@@ -102,9 +95,11 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {
         // do nothing for now?
     }
+
     override fun onProviderEnabled(s: String) {
         // don't need to do anything?
     }
+
     override fun onProviderDisabled(s: String) {
         // don't need to do anything here either?
     }
