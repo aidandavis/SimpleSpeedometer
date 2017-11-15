@@ -13,7 +13,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.domain.aidandavis.simplespeedo.R
+import com.aidandavisdev.aidandavis.simplespeedo.R
 
 class MainActivity : AppCompatActivity() {
     private lateinit var speedText: TextView
