@@ -60,6 +60,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     }
 
     private fun calculateSpeedManually(location: Location): Double {
+        // todo: THIS, RIGHT NOW, ONLY KEEPS THE FIRST 10 EVER STORED. NEEDS FIXING.
         locationBuffer.add(location)
         // keep buffer size small
         while (locationBuffer.size > 10) { // 10 is a guess
@@ -70,24 +71,20 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
             val distance = getAverageDistanceFromBuffer() // metres
             val time = (locationBuffer.last().time - locationBuffer.first().time) / 1000 // seconds
 
-            (distance / time).toDouble() // thanks grade-8 physics
+            (distance / time.toDouble()) // thanks grade-8 physics
         } else {
             0.0
         }
     }
 
-    private fun getAverageDistanceFromBuffer(): Long {
-        var totalDistance = 0F
-        for (i in locationBuffer.indices) {
-            if (i == 0) continue // skipping first
-
-            val distanceBetweenTwo = floatArrayOf(0F, 0F, 0F)
-            Location.distanceBetween(locationBuffer[i - 1].latitude, locationBuffer[i - 1].longitude,
-                    locationBuffer[i].latitude, locationBuffer[i].longitude, distanceBetweenTwo)
-
-            totalDistance += distanceBetweenTwo[0] // computed distance is stored in first index of array
-        }
-        return (totalDistance / locationBuffer.size).toLong()
+    private fun getAverageDistanceFromBuffer(): Double {
+        val totalDistance = locationBuffer.indices
+                .filter {
+                    it != 0 // skipping first
+                }
+                .map { locationBuffer[it -1].distanceTo(locationBuffer[it]) }
+                .sum()
+        return (totalDistance / locationBuffer.size).toDouble()
     }
 
 
