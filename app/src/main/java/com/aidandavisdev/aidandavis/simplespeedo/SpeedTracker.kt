@@ -53,25 +53,23 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         locationBuffer.add(location)
         if (isTracking) {
             // various? buffer algorithms here...
-            val buffer = locationBuffer.subList(locationBuffer.lastIndex-10, locationBuffer.lastIndex) // FOR NOW, last 10 points
+            if (locationBuffer.size > 10) {
+                val buffer = locationBuffer.subList(locationBuffer.lastIndex - 10, locationBuffer.lastIndex) // FOR NOW, last 10 points
 
-            speed = if (location.hasSpeed()) {
-                location.speed.toDouble()
-            } else {
-                calculateSpeedManually(buffer)
+                speed = if (location.hasSpeed()) {
+                    location.speed.toDouble()
+                } else {
+                    calculateSpeedManually(buffer)
+                }
             }
         }
     }
 
     private fun calculateSpeedManually(buffer: List<Location>): Double {
-        return if (buffer.size > 3) {
-            val distance = getAverageDistanceFromBuffer(buffer) // metres
-            val time = (buffer.last().time - buffer.first().time) / 1000 // seconds
+        val distance = getAverageDistanceFromBuffer(buffer) // metres
+        val time = (buffer.last().time - buffer.first().time) / 1000 // seconds
 
-            (distance / time.toDouble()) // thanks grade-8 physics
-        } else {
-            0.0
-        }
+        return (distance / time.toDouble()) // thanks grade-8 physics
     }
 
     private fun getAverageDistanceFromBuffer(buffer: List<Location>): Double {
@@ -79,7 +77,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
                 .filter {
                     it != 0 // skipping first
                 }
-                .map { buffer[it -1].distanceTo(buffer[it]) }
+                .map { buffer[it - 1].distanceTo(buffer[it]) }
                 .sum()
         return (totalDistance / buffer.size).toDouble()
     }
