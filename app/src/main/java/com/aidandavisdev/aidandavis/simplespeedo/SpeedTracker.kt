@@ -23,8 +23,6 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     val speedKMH: Double
         get() = speed * 3.6
 
-    private var locationBuffer: ArrayList<Location> = ArrayList()
-
     fun startTracking() {
         if (!isTracking) {
             // permission check
@@ -49,27 +47,26 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         }
     }
 
+    private var locationBuffer: ArrayList<Location> = ArrayList()
+
     override fun onLocationChanged(location: Location) {
+        locationBuffer.add(location)
         if (isTracking) {
+            // various? buffer algorithms here...
+            val buffer = locationBuffer.subList(locationBuffer.lastIndex-10, locationBuffer.lastIndex) // FOR NOW, last 10 points
+
             speed = if (location.hasSpeed()) {
                 location.speed.toDouble()
             } else {
-                calculateSpeedManually(location)
+                calculateSpeedManually(buffer)
             }
         }
     }
 
-    private fun calculateSpeedManually(location: Location): Double {
-        // todo: THIS, RIGHT NOW, ONLY KEEPS THE FIRST 10 EVER STORED. NEEDS FIXING.
-        locationBuffer.add(location)
-        // keep buffer size small
-        while (locationBuffer.size > 10) { // 10 is a guess
-            locationBuffer.removeAt(locationBuffer.lastIndex)
-        }
-
-        return if (locationBuffer.size > 3) {
-            val distance = getAverageDistanceFromBuffer() // metres
-            val time = (locationBuffer.last().time - locationBuffer.first().time) / 1000 // seconds
+    private fun calculateSpeedManually(buffer: List<Location>): Double {
+        return if (buffer.size > 3) {
+            val distance = getAverageDistanceFromBuffer(buffer) // metres
+            val time = (buffer.last().time - buffer.first().time) / 1000 // seconds
 
             (distance / time.toDouble()) // thanks grade-8 physics
         } else {
@@ -77,14 +74,14 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         }
     }
 
-    private fun getAverageDistanceFromBuffer(): Double {
-        val totalDistance = locationBuffer.indices
+    private fun getAverageDistanceFromBuffer(buffer: List<Location>): Double {
+        val totalDistance = buffer.indices
                 .filter {
                     it != 0 // skipping first
                 }
-                .map { locationBuffer[it -1].distanceTo(locationBuffer[it]) }
+                .map { buffer[it -1].distanceTo(buffer[it]) }
                 .sum()
-        return (totalDistance / locationBuffer.size).toDouble()
+        return (totalDistance / buffer.size).toDouble()
     }
 
 
