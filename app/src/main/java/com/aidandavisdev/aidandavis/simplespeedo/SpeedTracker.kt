@@ -20,8 +20,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     private var isTracking = false
     private var speed = 0.0 // m/s
 
-    val speedKMH: Double
-        get() = speed * 3.6
+    fun getSpeedKMH(): Double = speed.times(3.6)
 
     fun startTracking() {
         if (!isTracking) {
@@ -48,13 +47,14 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     }
 
     private var locationBuffer: ArrayList<Location> = ArrayList()
+    private val BUFFER_SIZE = 5
 
     override fun onLocationChanged(location: Location) {
         locationBuffer.add(location)
         if (isTracking) {
             // various? buffer algorithms here...
-            if (locationBuffer.size > 10) {
-                val buffer = locationBuffer.subList(locationBuffer.lastIndex - 10, locationBuffer.lastIndex) // FOR NOW, last 10 points
+            if (locationBuffer.size > BUFFER_SIZE) {
+                val buffer = locationBuffer.subList(locationBuffer.lastIndex - BUFFER_SIZE, locationBuffer.lastIndex) // FOR NOW, last 10 points
 
                 speed = if (location.hasSpeed()) {
                     location.speed.toDouble()
