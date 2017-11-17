@@ -12,9 +12,8 @@ import android.os.Bundle
  * Created by Aidan Davis on 5/11/2017.
  */
 
-abstract class SpeedTracker(private val mContext: Context, private val isTrackingStatus: Boolean) : LocationListener {
-    private val mLocationManager: LocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+abstract class SpeedTracker(context: Context, private val isTrackingStatus: Boolean) : LocationListener {
+    private val mLocationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isTracking = false
 
     var speedMPS = 0.0 // m/s

@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     enum class GpsStatus {
         DISABLED, WAITING, FIXED
     }
-    private var gpsStatus = GpsStatus.WAITING
 
     private  lateinit var speedTracker: SpeedTracker
 
@@ -53,40 +52,29 @@ class MainActivity : AppCompatActivity() {
         speedFormatText = findViewById(R.id.speed_format) as TextView
         mainLayout = findViewById(R.id.main_layout) as RelativeLayout
 
-        setStatusDisplay()
-
         speedTracker = object : SpeedTracker(this, (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)) {
             override fun onGPSDisabled() {
-                gpsStatus = GpsStatus.DISABLED
-                setStatusDisplay()
+                setStatusDisplay(GpsStatus.DISABLED)
             }
 
             override fun onGPSWaiting() {
-                gpsStatus = GpsStatus.WAITING
-                setStatusDisplay()
+                setStatusDisplay(GpsStatus.WAITING)
             }
 
             override fun onGPSFix() {
-                gpsStatus = GpsStatus.FIXED
-                setStatusDisplay()
-
+                setStatusDisplay(GpsStatus.FIXED)
             }
 
             override fun onSpeedChanged() {
-                if (gpsStatus != GpsStatus.FIXED) {
-                    gpsStatus = GpsStatus.FIXED
-                }
                 updateSpeedDisplay()
             }
         }
     }
 
-    private fun setStatusDisplay() {
-        when (gpsStatus) {
-            GpsStatus.FIXED -> toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
-            GpsStatus.WAITING -> toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.gps_waiting))
-            GpsStatus.DISABLED -> toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.gps_disabled))
-        }
+    private fun setStatusDisplay(gpsStatus: GpsStatus) = when (gpsStatus) {
+        GpsStatus.FIXED -> toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        GpsStatus.WAITING -> toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.gps_waiting))
+        GpsStatus.DISABLED -> toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.gps_disabled))
     }
 
     private fun cycleSpeedFormat() {
@@ -143,6 +131,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         requestPermission()
         speedTracker.startTracking()
+        setStatusDisplay(GpsStatus.WAITING)
     }
 
     override fun onPause() {
