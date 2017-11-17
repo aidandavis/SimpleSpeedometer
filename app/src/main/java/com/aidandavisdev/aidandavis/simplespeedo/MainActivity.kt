@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -40,9 +41,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // get permission if not there
         requestPermission()
+        // keep screen on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setContentView(R.layout.activity_main)
 
@@ -84,7 +86,6 @@ class MainActivity : AppCompatActivity() {
         if (!isBlack) {
             textColour = ContextCompat.getColor(this, R.color.white)
             backgroundColour = ContextCompat.getColor(this, R.color.black)
-
             isBlack = true
         } else {
             isBlack = false
@@ -135,6 +136,6 @@ class MainActivity : AppCompatActivity() {
             SpeedFormat.MPH -> speedTracker.speedMPH
             SpeedFormat.MPS -> speedTracker.speedMPS
         }
-        speedText.text = "%.2f".format(speed)
+        speedText.text = getString(R.string.speed_text_format).format(speed)
     }
 }

@@ -23,7 +23,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     val speedKMH: Double
         get() = speedMPS * 3.6
     val speedMPH: Double
-    get() = speedMPS * 2.2
+        get() = speedMPS * 2.2
 
     fun startTracking() {
         if (!isTracking) {

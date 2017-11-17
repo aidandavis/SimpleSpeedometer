@@ -7,4 +7,5 @@
     <string name="kmh">(KM/H)</string>
     <string name="mph">(MPH)</string>
     <string name="mps">(M/S)</string>
+    <string name="speed_text_format">%.2f</string>
 </resources>
