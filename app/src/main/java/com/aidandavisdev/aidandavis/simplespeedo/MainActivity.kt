@@ -62,11 +62,18 @@ class MainActivity : AppCompatActivity() {
         mainLayout = findViewById(R.id.main_layout) as RelativeLayout
     }
 
-    private fun cycleSpeedFormat() {
-        speedFormat = when (speedFormat) {
-            SpeedFormat.KMH -> SpeedFormat.MPH
-            SpeedFormat.MPH -> SpeedFormat.MPS
-            SpeedFormat.MPS -> SpeedFormat.KMH
+    private fun cycleSpeedFormat() = when (speedFormat) {
+        SpeedFormat.KMH -> {
+            speedFormat = SpeedFormat.MPH
+            speedFormatText.setText(getString(R.string.mph))
+        }
+        SpeedFormat.MPH -> {
+            speedFormat = SpeedFormat.MPS
+            speedFormatText.setText(getString(R.string.mps))
+        }
+        SpeedFormat.MPS -> {
+            speedFormat = SpeedFormat.KMH
+            speedFormatText.setText(getString(R.string.kmh))
         }
     }
 
