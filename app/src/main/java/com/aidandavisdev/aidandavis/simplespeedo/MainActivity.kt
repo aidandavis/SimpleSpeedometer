@@ -108,6 +108,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSpeedDisplay() {
-        speedText.text = "%.2f".format(speedTracker.getSpeedKMH())
+        speedText.text = "%.2f".format(speedTracker.speedKMH)
     }
 }
