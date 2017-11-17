@@ -12,7 +12,6 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     private lateinit var speedText: TextView
@@ -64,18 +63,20 @@ class MainActivity : AppCompatActivity() {
         mainLayout = findViewById(R.id.main_layout) as RelativeLayout
     }
 
-    private fun cycleSpeedFormat() = when (speedFormat) {
-        SpeedFormat.KMH -> {
-            speedFormat = SpeedFormat.MPH
-            speedFormatText.setText(getString(R.string.mph))
+    private fun cycleSpeedFormat() {
+        speedFormat = when (speedFormat) {
+            SpeedFormat.KMH -> SpeedFormat.MPH
+            SpeedFormat.MPH -> SpeedFormat.MPS
+            SpeedFormat.MPS -> SpeedFormat.KMH
         }
-        SpeedFormat.MPH -> {
-            speedFormat = SpeedFormat.MPS
-            speedFormatText.setText(getString(R.string.mps))
-        }
-        SpeedFormat.MPS -> {
-            speedFormat = SpeedFormat.KMH
-            speedFormatText.setText(getString(R.string.kmh))
+        setFormatText()
+    }
+
+    private fun setFormatText() {
+        when (speedFormat) {
+            SpeedFormat.KMH -> speedFormatText.text = getString(R.string.kmh)
+            SpeedFormat.MPH -> speedFormatText.text = getString(R.string.mph)
+            SpeedFormat.MPS -> speedFormatText.text = getString(R.string.mps)
         }
     }
 
