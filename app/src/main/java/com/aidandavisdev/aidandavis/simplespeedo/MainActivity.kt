@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 setStatusDisplay()
             }
 
-            override fun onGPSStarted() {
+            override fun onGPSWaiting() {
                 gpsStatus = GpsStatus.WAITING
                 setStatusDisplay()
             }

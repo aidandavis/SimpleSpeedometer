@@ -64,10 +64,9 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
                 super.onFirstFix(ttffMillis)
                 onGPSFix()
             }
-
             override fun onStarted() {
                 super.onStarted()
-                onGPSStarted()
+                onGPSWaiting()
             }
         }
         mLocationManager.registerGnssStatusCallback(mGnssStatusCallback)
@@ -98,7 +97,13 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
         val distance = getAverageDistanceFromBuffer(buffer) // metres
         val time = (buffer.last().time - buffer.first().time) / 1000 // seconds
 
-        return (distance / time.toDouble()) // thanks grade-8 physics
+        if ((System.currentTimeMillis() - buffer.last().time) > 10000) {
+            // speed goes to 0 if no points received in last 10 seconds
+            onGPSWaiting()
+            return 0.0
+        } else {
+            return (distance / time.toDouble()) // thanks grade-8 physics
+        }
     }
 
     private fun getAverageDistanceFromBuffer(buffer: List<Location>): Double {
@@ -115,7 +120,7 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
     abstract fun onSpeedChanged()
 
     abstract fun onGPSDisabled()
-    abstract fun onGPSStarted()
+    abstract fun onGPSWaiting()
     abstract fun onGPSFix()
 
     override fun onProviderDisabled(s: String) {
