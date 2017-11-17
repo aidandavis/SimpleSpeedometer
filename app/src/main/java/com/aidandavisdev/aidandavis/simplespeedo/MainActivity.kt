@@ -35,8 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // get permission if not there
-        requestPermission()
+
         // keep screen on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -132,12 +131,17 @@ class MainActivity : AppCompatActivity() {
             val finePermission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
             ActivityCompat.requestPermissions(this, finePermission, fineRequestCode)
 
+            // Saves having to deal with callbacks for if/if not user said yes...
+            // (Normally, you are supposed to get the callback and then not call methods in the app
+            // that require the permission. But, this entire app needs the permission so I'm just
+            // not going to run the app unless the permission is there).
             finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        requestPermission()
         speedTracker.startTracking()
     }
 

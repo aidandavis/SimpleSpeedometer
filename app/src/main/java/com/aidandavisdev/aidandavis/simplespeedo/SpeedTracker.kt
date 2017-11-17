@@ -1,16 +1,12 @@
 package com.aidandavisdev.aidandavis.simplespeedo
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.widget.Toast
 
 /**
  * Created by Aidan Davis on 5/11/2017.
@@ -27,17 +23,12 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
     val speedMPH: Double
         get() = speedMPS * 2.2
 
+    @SuppressLint("MissingPermission")
     fun startTracking() {
         if (!isTracking) {
-            // permission check
-            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(mContext, "Location Permission Not Given :(", Toast.LENGTH_SHORT).show()
-                return
-            }
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-            isTracking = true
-
             if (isTrackingStatus) registerGnssCallback()
+            isTracking = true
         }
     }
 
@@ -47,11 +38,10 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
     fun stopTracking() {
         if (isTracking) {
             mLocationManager.removeUpdates(this)
+            if (isTrackingStatus) unregisterGnssCallback()
             isTracking = false
             speedMPS = 0.0
             locationBuffer.clear()
-
-            if (isTrackingStatus) unregisterGnssCallback()
         }
     }
 
@@ -75,7 +65,6 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
     @SuppressLint("NewApi")
     private fun unregisterGnssCallback() {
         mLocationManager.unregisterGnssStatusCallback(mGnssStatusCallback)
-
     }
 
     private var locationBuffer: ArrayList<Location> = ArrayList()
@@ -97,28 +86,25 @@ abstract class SpeedTracker(private val mContext: Context, private val isTrackin
         val distance = getAverageDistanceFromBuffer(buffer) // metres
         val time = (buffer.last().time - buffer.first().time) / 1000 // seconds
 
-        if ((System.currentTimeMillis() - buffer.last().time) > 10000) {
+        return if ((System.currentTimeMillis() - buffer.last().time) > 10000) {
             // speed goes to 0 if no points received in last 10 seconds
             onGPSWaiting()
-            return 0.0
+            0.0
         } else {
-            return (distance / time.toDouble()) // thanks grade-8 physics
+            (distance / time.toDouble()) // thanks grade-8 physics
         }
     }
 
     private fun getAverageDistanceFromBuffer(buffer: List<Location>): Double {
         val totalDistance = buffer.indices
-                .filter {
-                    it != 0 // skipping first
-                }
-                .map { buffer[it - 1].distanceTo(buffer[it]) }
+                .filter { it != 0 } // skip first element
+                .map { buffer[it - 1].distanceTo(buffer[it]) } // distance between this element and one prior
                 .sum()
         return (totalDistance / buffer.size).toDouble()
     }
 
     // anonymous functions so calling class knows when speed is changed, or gps is fixed, etc
     abstract fun onSpeedChanged()
-
     abstract fun onGPSDisabled()
     abstract fun onGPSWaiting()
     abstract fun onGPSFix()
