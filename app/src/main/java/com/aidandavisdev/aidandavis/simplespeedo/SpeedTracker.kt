@@ -1,8 +1,10 @@
 package com.aidandavisdev.aidandavis.simplespeedo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -14,7 +16,7 @@ import android.widget.Toast
  * Created by Aidan Davis on 5/11/2017.
  */
 
-abstract class SpeedTracker(private val mContext: Context) : LocationListener {
+abstract class SpeedTracker(private val mContext: Context, private val isTrackingStatus: Boolean) : LocationListener {
     private val mLocationManager: LocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     private var isTracking = false
@@ -34,6 +36,8 @@ abstract class SpeedTracker(private val mContext: Context) : LocationListener {
             }
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
             isTracking = true
+
+            if (isTrackingStatus) registerGnssCallback()
         }
     }
 
@@ -46,7 +50,33 @@ abstract class SpeedTracker(private val mContext: Context) : LocationListener {
             isTracking = false
             speedMPS = 0.0
             locationBuffer.clear()
+
+            if (isTrackingStatus) unregisterGnssCallback()
         }
+    }
+
+    private lateinit var mGnssStatusCallback: GnssStatus.Callback
+
+    @SuppressLint("MissingPermission", "NewApi")
+    private fun registerGnssCallback() {
+        mGnssStatusCallback = object : GnssStatus.Callback() {
+            override fun onFirstFix(ttffMillis: Int) {
+                super.onFirstFix(ttffMillis)
+                onGPSFix()
+            }
+
+            override fun onStarted() {
+                super.onStarted()
+                onGPSStarted()
+            }
+        }
+        mLocationManager.registerGnssStatusCallback(mGnssStatusCallback)
+    }
+
+    @SuppressLint("NewApi")
+    private fun unregisterGnssCallback() {
+        mLocationManager.unregisterGnssStatusCallback(mGnssStatusCallback)
+
     }
 
     private var locationBuffer: ArrayList<Location> = ArrayList()
@@ -84,14 +114,19 @@ abstract class SpeedTracker(private val mContext: Context) : LocationListener {
     // anonymous functions so calling class knows when speed is changed, or gps is fixed, etc
     abstract fun onSpeedChanged()
 
+    abstract fun onGPSDisabled()
+    abstract fun onGPSStarted()
+    abstract fun onGPSFix()
 
-    /* functions below are unused but required */
+    override fun onProviderDisabled(s: String) {
+        onGPSDisabled()
+    }
+
+
+    /* unused but required. functionality this should provide is done by the GNSS callback */
     override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {
     }
 
     override fun onProviderEnabled(s: String) {
-    }
-
-    override fun onProviderDisabled(s: String) {
     }
 }
