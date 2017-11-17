@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="20dp"
-                android:text="@string/speed"
+                android:text="@string/default_speed_text"
                 android:textColor="@color/black"
                 android:textSize="120sp" />
 
@@ -59,7 +59,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
             android:backgroundTint="@color/colorPrimary"
-            android:text="@string/blaack"
+            android:text="@string/blaaack"
             android:textColor="@color/white"/>
 
     </RelativeLayout>

@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
+        mainLayout = findViewById(R.id.main_layout) as RelativeLayout
         toolbar = findViewById(R.id.toolbar) as Toolbar
         toolbar.setTitle(R.string.toolbar_title)
 
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         blackButton.setOnClickListener({ blackButtonPressed() })
 
         speedFormatText = findViewById(R.id.speed_format) as TextView
-        mainLayout = findViewById(R.id.main_layout) as RelativeLayout
+        speedFormatText.setOnClickListener({ cycleSpeedFormat() })
 
         speedTracker = object : SpeedTracker(this, (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)) {
             override fun onGPSDisabled() {
@@ -101,8 +102,10 @@ class MainActivity : AppCompatActivity() {
         if (!isBlack) {
             textColour = ContextCompat.getColor(this, R.color.white)
             backgroundColour = ContextCompat.getColor(this, R.color.black)
+            blackButton.setText(R.string.whiiite)
             isBlack = true
         } else {
+            blackButton.setText(R.string.blaaack)
             isBlack = false
         }
 

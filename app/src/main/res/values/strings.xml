@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Super-Simple Speedo</string>
     <string name="title_activity_main">Super-Simple Speedo</string>
-    <string name="speed">Speed</string>
-    <string name="blaack">BLAAAACK</string>
+    <string name="default_speed_text">0.0</string>
+    <string name="blaaack">BLAAAACK</string>
+    <string name="whiiite">WHIIIITE</string>
     <string name="toolbar_title">Super Simple Speedo</string>
     <string name="kmh">(KM/H)</string>
     <string name="mph">(MPH)</string>
