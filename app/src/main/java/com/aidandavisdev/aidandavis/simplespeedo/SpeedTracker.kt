@@ -14,7 +14,7 @@ import android.widget.Toast
  * Created by Aidan Davis on 5/11/2017.
  */
 
-class SpeedTracker(private val mContext: Context) : LocationListener {
+abstract class SpeedTracker(private val mContext: Context) : LocationListener {
     private val mLocationManager: LocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     private var isTracking = false
@@ -59,6 +59,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
             if (locationBuffer.size > BUFFER_SIZE) {
                 val buffer = locationBuffer.subList(locationBuffer.lastIndex - BUFFER_SIZE, locationBuffer.lastIndex)
                 speedMPS = calculateSpeedManually(buffer)
+                onSpeedChanged()
             }
         }
     }
@@ -79,6 +80,9 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
                 .sum()
         return (totalDistance / buffer.size).toDouble()
     }
+
+    // anonymous functions so calling class knows when speed is changed, or gps is fixed, etc
+    abstract fun onSpeedChanged()
 
 
     /* functions below are unused but required */

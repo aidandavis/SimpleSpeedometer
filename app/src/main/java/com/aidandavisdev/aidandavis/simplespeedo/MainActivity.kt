@@ -3,7 +3,6 @@ package com.aidandavisdev.aidandavis.simplespeedo
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -15,28 +14,18 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var speedText: TextView
-    private lateinit var speedTracker: SpeedTracker
-
     private lateinit var blackButton: Button
     private lateinit var toolbar: Toolbar
     private lateinit var speedFormatText: TextView
     private lateinit var mainLayout: RelativeLayout
 
     private var isBlack = false
-
-    private var updater: Handler? = null
-    private val updateTask = object : Runnable {
-        override fun run() {
-            updateSpeedDisplay()
-            updater!!.postDelayed(this, 333) // time between updates
-        }
-    }
-
+    private var speedFormat = SpeedFormat.KMH
     enum class SpeedFormat {
         KMH, MPH, MPS
     }
 
-    private var speedFormat = SpeedFormat.KMH
+    private  lateinit var speedTracker: SpeedTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +42,17 @@ class MainActivity : AppCompatActivity() {
         speedText = findViewById(R.id.speed_display) as TextView
         speedText.setOnClickListener({ cycleSpeedFormat() })
 
-        speedTracker = SpeedTracker(baseContext)
-        updater = Handler()
-
         blackButton = findViewById(R.id.blackButton) as Button
         blackButton.setOnClickListener({ blackButtonPressed() })
 
         speedFormatText = findViewById(R.id.speed_format) as TextView
         mainLayout = findViewById(R.id.main_layout) as RelativeLayout
+
+        speedTracker = object : SpeedTracker(this) {
+            override fun onSpeedChanged() {
+                updateSpeedDisplay()
+            }
+        }
     }
 
     private fun cycleSpeedFormat() {
@@ -69,10 +61,10 @@ class MainActivity : AppCompatActivity() {
             SpeedFormat.MPH -> SpeedFormat.MPS
             SpeedFormat.MPS -> SpeedFormat.KMH
         }
-        setFormatText()
+        setSpeedFormatText()
     }
 
-    private fun setFormatText() {
+    private fun setSpeedFormatText() {
         when (speedFormat) {
             SpeedFormat.KMH -> speedFormatText.text = getString(R.string.kmh)
             SpeedFormat.MPH -> speedFormatText.text = getString(R.string.mph)
@@ -111,27 +103,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         speedTracker.startTracking()
-        startUpdatingDisplay()
     }
 
     override fun onPause() {
         super.onPause()
-
-        stopUpdatingDisplay()
         speedTracker.stopTracking()
     }
 
-    private fun startUpdatingDisplay() {
-        updater!!.post(updateTask)
-    }
-
-    private fun stopUpdatingDisplay() {
-        updater!!.removeCallbacks(updateTask)
-    }
-
-    private fun updateSpeedDisplay() {
+    fun updateSpeedDisplay() {
         val speed = when (speedFormat) {
             SpeedFormat.KMH -> speedTracker.speedKMH
             SpeedFormat.MPH -> speedTracker.speedMPH
