@@ -32,6 +32,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    enum class SpeedFormat {
+        KMH, MPH, MPS
+    }
+
+    private var speedFormat = SpeedFormat.KMH
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,8 +50,9 @@ class MainActivity : AppCompatActivity() {
         toolbar.setTitle(R.string.toolbar_title)
 
         speedText = findViewById(R.id.speed_display) as TextView
-        speedTracker = SpeedTracker(baseContext)
+        speedText.setOnClickListener({ cycleSpeedFormat() })
 
+        speedTracker = SpeedTracker(baseContext)
         updater = Handler()
 
         blackButton = findViewById(R.id.blackButton) as Button
@@ -53,6 +60,14 @@ class MainActivity : AppCompatActivity() {
 
         speedFormatText = findViewById(R.id.speed_format) as TextView
         mainLayout = findViewById(R.id.main_layout) as RelativeLayout
+    }
+
+    private fun cycleSpeedFormat() {
+        speedFormat = when (speedFormat) {
+            SpeedFormat.KMH -> SpeedFormat.MPH
+            SpeedFormat.MPH -> SpeedFormat.MPS
+            SpeedFormat.MPS -> SpeedFormat.KMH
+        }
     }
 
     private fun blackButtonPressed() {
@@ -77,9 +92,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            var fineRequestCode = 1
-            var finePermission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-            ActivityCompat.requestPermissions(this, finePermission, fineRequestCode )
+            val fineRequestCode = 1
+            val finePermission = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+            ActivityCompat.requestPermissions(this, finePermission, fineRequestCode)
 
             finish()
         }
@@ -108,6 +123,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSpeedDisplay() {
-        speedText.text = "%.2f".format(speedTracker.speedKMH)
+        val speed = when (speedFormat) {
+            SpeedFormat.KMH -> speedTracker.speedKMH
+            SpeedFormat.MPH -> speedTracker.speedMPH
+            SpeedFormat.MPS -> speedTracker.speedMPS
+        }
+        speedText.text = "%.2f".format(speed)
     }
 }

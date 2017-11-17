@@ -18,10 +18,12 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
     private val mLocationManager: LocationManager = mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     private var isTracking = false
-    private var speed = 0.0 // m/s
 
+    var speedMPS = 0.0 // m/s
     val speedKMH: Double
-        get() = speed * 3.6
+        get() = speedMPS * 3.6
+    val speedMPH: Double
+    get() = speedMPS * 2.2
 
     fun startTracking() {
         if (!isTracking) {
@@ -42,7 +44,7 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         if (isTracking) {
             mLocationManager.removeUpdates(this)
             isTracking = false
-            speed = 0.0
+            speedMPS = 0.0
             locationBuffer.clear()
         }
     }
@@ -55,13 +57,8 @@ class SpeedTracker(private val mContext: Context) : LocationListener {
         if (isTracking) {
             // various? buffer algorithms here...
             if (locationBuffer.size > BUFFER_SIZE) {
-                val buffer = locationBuffer.subList(locationBuffer.lastIndex - BUFFER_SIZE, locationBuffer.lastIndex) // FOR NOW, last 10 points
-
-                speed = if (location.hasSpeed()) {
-                    location.speed.toDouble()
-                } else {
-                    calculateSpeedManually(buffer)
-                }
+                val buffer = locationBuffer.subList(locationBuffer.lastIndex - BUFFER_SIZE, locationBuffer.lastIndex)
+                speedMPS = calculateSpeedManually(buffer)
             }
         }
     }
