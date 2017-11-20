@@ -82,7 +82,7 @@ abstract class SpeedTracker(context: Context, private val isTrackingStatus: Bool
     }
 
     private fun calculateSpeedManually(buffer: List<Location>): Double {
-        val distance = getAverageDistanceFromBuffer(buffer) // metres
+        val distance = getDistanceFromBuffer(buffer) // metres
         val time = (buffer.last().time - buffer.first().time) / 1000 // seconds
 
         return if ((System.currentTimeMillis() - buffer.last().time) > 10000) {
@@ -94,12 +94,11 @@ abstract class SpeedTracker(context: Context, private val isTrackingStatus: Bool
         }
     }
 
-    private fun getAverageDistanceFromBuffer(buffer: List<Location>): Double {
-        val totalDistance = buffer.indices
+    private fun getDistanceFromBuffer(buffer: List<Location>): Double {
+        return buffer.indices
                 .filter { it != 0 } // skip first element
                 .map { buffer[it - 1].distanceTo(buffer[it]) } // distance between this element and one prior
-                .sum()
-        return (totalDistance / buffer.size).toDouble()
+                .sum().toDouble()
     }
 
     // anonymous functions so calling class knows when speed is changed, or gps is fixed, etc
